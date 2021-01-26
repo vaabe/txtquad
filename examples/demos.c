@@ -3,6 +3,11 @@
 #include "txtquad.h"
 #include "inp.h"
 
+#include "faffing.h"
+
+int essayLen; 
+char *essay; 
+
 #ifdef DEMO_2
 static char cli[1024];
 static size_t cli_len;
@@ -34,6 +39,36 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 		.v = 'A',
 		.col = v4_one(),
 	};
+
+#elif DEMO_4
+
+//	int essayLen = get_essay_len(); 
+//	char *essay = get_essay_chars(essayLen); 
+
+	text->char_count = essayLen; 
+
+	// initial x, y, z positions
+	float x_i = -4.0f; 
+	float y_i = 2.0f; 
+	float z_i = 4; 
+
+	for (int i = 0; i < essayLen; i++) {
+		text->chars[i] = (struct Char) {
+			.pos = { x_i, y_i, z_i }, 
+			.rot = qt_id(), 
+			.scale = 0.25f, 
+			.v = essay[i],
+			.col = v4_one(),
+		}; 
+		x_i += 0.3f; 
+
+		if (x_i > 4.0f) {
+			x_i = -4.0f; 
+			y_i -= 0.3f; 
+		}
+	}
+
+
 #elif DEMO_1
 	char a = 'A' + (1 - .5f * (1 + cos(data.t * .5f))) * 26 + 0;
 	char z = 'Z' - (1 - .5f * (1 + cos(data.t * .5f))) * 26 + 1;
@@ -67,6 +102,7 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 		.v = a,
 		.col = v4_one(),
 	};
+
 #elif DEMO_2
 	if (KEY_DOWN(ENTER)) {
 		cli[cli_len++] = '\n';
@@ -96,6 +132,7 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 		.col_lim = 8,
 		.cursor = '_',
 	};
+
 #elif DEMO_3
 	cam_rot = qt_axis_angle(v3_up(), sinf(data.t));
 	cam_pos = qt_app(cam_rot, v3_neg(v3_fwd()));
@@ -124,6 +161,7 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 	};
 }
 
+
 int main()
 {
 #ifndef DEMO_2
@@ -142,6 +180,9 @@ int main()
 		.win_size = { 800, 600 }, // Ignored
 		.mode = MODE_BORDERLESS,
 	};
+
+	essayLen = get_essay_len();  
+	essay = get_essay_chars(essayLen); 
 
 	txtquad_init(settings);
 	txtquad_start();
