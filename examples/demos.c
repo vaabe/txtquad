@@ -4,9 +4,15 @@
 #include "inp.h"
 
 #include "faffing.h"
+#include "parse.h"
 
 int essayLen; 
 char *essay; 
+
+char hilbertPath[50] = "./examples/hilbert.md"; 
+
+struct Doc doc; 
+int *charCount; 
 
 #ifdef DEMO_2
 static char cli[1024];
@@ -68,6 +74,45 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 		}
 	}
 
+#elif DEMO_5
+
+	text->char_count = doc.numChars; 
+
+	float x_i = -4.0f; 
+	float y_i = 2.0f; 
+	float z_i = 4; 
+
+	int k = 0; 
+
+	// float headerDamping; 
+
+	float textScale = 0.1f; 
+
+	int numVisibleBlocks = 9; 
+
+	for (int blockNum = 0; blockNum < numVisibleBlocks; blockNum++) {
+		for (int charNum = 0; charNum < charCount[blockNum]; charNum++) {
+			text->chars[k] = (struct Char) {
+				.pos = { x_i, y_i, z_i}, 
+				.rot = qt_id(), 
+				.scale = textScale * doc.block[blockNum].type, 
+				.v = doc.block[blockNum].text[charNum], 
+				.col = v4_one(), 
+			}; 
+
+			x_i += textScale * doc.block[blockNum].type; 
+
+			if (x_i > 4.0f) {
+				x_i = -4.0f; 
+				y_i -= 0.15f; 
+			}
+
+			k++; 
+		}
+
+		x_i = -4.0f; 
+		y_i -= 0.2f; 
+	}
 
 #elif DEMO_1
 	char a = 'A' + (1 - .5f * (1 + cos(data.t * .5f))) * 26 + 0;
@@ -161,7 +206,6 @@ struct Share txtquad_update(struct Frame data, struct Text *text)
 	};
 }
 
-
 int main()
 {
 #ifndef DEMO_2
@@ -183,6 +227,12 @@ int main()
 
 	essayLen = get_essay_len();  
 	essay = get_essay_chars(essayLen); 
+
+	doc.filePath = hilbertPath; 
+	doc.numChars = get_num_chars(doc); 
+	doc.numTextBlocks = get_num_blocks(doc); 
+	charCount = get_block_char_count(doc); 
+	read_doc(&doc, charCount); 
 
 	txtquad_init(settings);
 	txtquad_start();

@@ -48,7 +48,7 @@ build lib: phony bin/txtquad.lib
 
 ### EXAMPLES ###
 
-demo = 4
+demo = 5
 sflags =
 
 rule shc
