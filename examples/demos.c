@@ -140,7 +140,7 @@ int main()
 		.app_name = "txtquad-demo",
 		.asset_path = "./assets/",
 		.win_size = { 800, 600 }, // Ignored
-		.mode = MODE_BORDERLESS,
+		.mode = MODE_WINDOWED,
 	};
 
 	txtquad_init(settings);
