@@ -46,9 +46,7 @@ build bin/txtquad.lib: $
     libs = ext/lib/glfw3.lib ext/lib/vulkan.lib
 build lib: phony bin/txtquad.lib
 
-### DEMOS ###
 
-demo = 5
 sflags =
 
 rule shc
@@ -62,6 +60,10 @@ build assets/vert_compat.spv: shc text.vert $
     | config.h
     sflags = -DPLATFORM_COMPAT_VBO
 build assets/frag.spv: shc text.frag
+
+### DEMOS ###
+
+demo = 4
 
 build $builddir/demos.o: cc examples/demos.c
     config = -O0 -ggdb -DDEMO_$demo
@@ -80,3 +82,25 @@ build bin/demos.macos: $
     | dylib assets/vert_compat.spv assets/frag.spv
     libs = -L bin -ltxtquad -rpath bin
 build demos.macos: phony bin/demos.macos
+
+### CREDITS ###
+
+credit = 5
+
+build $builddir/credits.o: cc examples/credits.c
+    config = -O0 -ggdb -DCREDIT_$credit
+build $builddir/credits_nopic.o: cc examples/credits.c
+    config = -O0 -ggdb -DCREDIT_$credit
+    cflags =
+
+build bin/credits: $
+    lde $builddir/credits.o $
+    | so assets/vert.spv assets/frag.spv
+    libs = -L bin -ltxtquad -rpath bin -lm
+build credits: phony bin/credits
+
+build bin/credits.macos: $
+    lde $builddir/credits.o $
+    | dylib assets/vert_compat.spv assets/frag.spv
+    libs = -L bin -ltxtquad -rpath bin
+build credits.macos: phony bin/credits.macos
