@@ -46,9 +46,9 @@ build bin/txtquad.lib: $
     libs = ext/lib/glfw3.lib ext/lib/vulkan.lib
 build lib: phony bin/txtquad.lib
 
-### EXAMPLES ###
+### DEMOS ###
 
-demo = 1
+demo = 5
 sflags =
 
 rule shc
@@ -80,11 +80,3 @@ build bin/demos.macos: $
     | dylib assets/vert_compat.spv assets/frag.spv
     libs = -L bin -ltxtquad -rpath bin
 build demos.macos: phony bin/demos.macos
-
-build bin/demos.exe: $
-    lde $builddir/demos_nopic.o $
-    | lib assets/vert.spv assets/frag.spv
-    libs = -L bin -ltxtquad $
-           -lmsvcrt -luser32 -lshell32 -lgdi32 $
-           -Wl,-nodefaultlib:libcmt -Wl,-nodefaultlib:msvcrtd -Wl,-machine:x64
-build demos.exe: phony bin/demos.exe
